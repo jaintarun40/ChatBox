@@ -1,6 +1,7 @@
 package com.example.tarun.chatbox;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,14 +12,20 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final int IMAGE_PICK = 1;
 
     private ListView mMessageListView;
+    private MessageListAdapter mMessageListAdapter;
     private ImageButton mGalleryButton;
     private EditText mMessageEditText;
     private ImageButton mSendButton;
+
+    private String mUserName = "Tarun Jain";
 
 
     @Override
@@ -60,6 +67,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        List<Message> messages = new ArrayList<>();
+        mMessageListAdapter = new MessageListAdapter(this, R.layout.message_type, messages);
+        mMessageListView.setAdapter(mMessageListAdapter);
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == IMAGE_PICK && resultCode == RESULT_OK) {
+            Uri imageUri = data.getData();
+
+        }
     }
 }
