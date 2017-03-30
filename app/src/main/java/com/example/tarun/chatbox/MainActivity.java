@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent, "Complete action using"),IMAGE_PICK);
             }
         });
+
+        mMessageEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
         mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
