@@ -15,9 +15,6 @@ import java.util.List;
  */
 
 public class MessageListAdapter extends ArrayAdapter<Message> {
-    public MessageListAdapter(Context context, int resourceId) {
-        super(context, resourceId);
-    }
 
     public MessageListAdapter(Context context, int resourceId, List<Message> messages) {
         super(context, resourceId, messages);
@@ -32,7 +29,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         }
 
         ImageView messageImage = (ImageView) convertView.findViewById(R.id.imageMessage);
-        TextView messageText = (TextView) convertView.findViewById(R.id.message_text);
+        TextView messageText = (TextView) convertView.findViewById(R.id.textMessage);
         TextView messageAuthor = (TextView) convertView.findViewById(R.id.authorMessage);
 
         Message message = getItem(position);

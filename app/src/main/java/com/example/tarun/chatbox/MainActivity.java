@@ -7,11 +7,19 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +36,11 @@ public class MainActivity extends AppCompatActivity {
 
     private String mUserName = "Tarun Jain";
 
+    //Firebase Objects
+    FirebaseDatabase mFirebaseDatabase;
+    DatabaseReference mMessagesDatabaseReference;
+    ChildEventListener mChildEventListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
         mGalleryButton = (ImageButton) findViewById(R.id.gallery_button);
         mMessageEditText = (EditText) findViewById(R.id.message_text);
         mSendButton = (ImageButton) findViewById(R.id.send_button);
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+
+        List<Message> messages = new ArrayList<>();
+        mMessageListAdapter = new MessageListAdapter(this, R.layout.message_type, messages);
+        mMessageListView.setAdapter(mMessageListAdapter);
 
         mGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,9 +90,40 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        List<Message> messages = new ArrayList<>();
-        mMessageListAdapter = new MessageListAdapter(this, R.layout.message_type, messages);
-        mMessageListView.setAdapter(mMessageListAdapter);
+
+        mSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Message message = new Message(mMessageEditText.getText().toString(), mUserName, null);
+                mMessagesDatabaseReference.push().setValue(message);
+                mMessageEditText.setText("");
+            }
+        });
+
+        mChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Message message = dataSnapshot.getValue(Message.class);
+                mMessageListAdapter.add(message);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
 
     }
 
