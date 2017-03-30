@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context="com.example.tarun.chatbox.MainActivity">
+
+    <ListView
+        android:id="@+id/messagesList"
+        android:layout_above="@+id/sendingTray"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:stackFromBottom="true"
+        android:divider="@android:color/darker_gray"
+        android:transcriptMode="alwaysScroll"
+        tools:listitem="@layout/message_type"/>
+    <LinearLayout
+        android:id="@+id/sendingTray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/customborder">
+
+        <ImageButton
+            android:id="@+id/gallery_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/ic_action_gallery"/>
+        <EditText
+            android:id="@+id/message_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:background="@drawable/customborder2"/>
+        <ImageButton
+            android:id="@+id/send_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/ic_action_send"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
