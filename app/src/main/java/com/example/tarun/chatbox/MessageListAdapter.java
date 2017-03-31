@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         ImageView messageImage = (ImageView) convertView.findViewById(R.id.imageMessage);
         TextView messageText = (TextView) convertView.findViewById(R.id.textMessage);
         TextView messageAuthor = (TextView) convertView.findViewById(R.id.authorMessage);
+        TextView messageDate = (TextView) convertView.findViewById(R.id.dateMessage);
 
         Message message = getItem(position);
 
@@ -49,6 +51,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         }
 
         messageAuthor.setText(message.getAuthorName());
+        messageDate.setText(new SimpleDateFormat("hh:mm a").format(message.getMessageDate()));
 
         return convertView;
     }
