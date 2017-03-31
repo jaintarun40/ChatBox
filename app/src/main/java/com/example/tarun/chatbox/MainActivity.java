@@ -64,7 +64,9 @@ public class MainActivity extends AppCompatActivity {
     //Firebase Objects
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mMessagesDatabaseReference;
+    private DatabaseReference mTitleDatabaseReference;
     private ChildEventListener mChildEventListener;
+    private ValueEventListener mValueEventListener;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseStorage mFirebaseStorage;
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseStorage = FirebaseStorage.getInstance();
 
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+        mTitleDatabaseReference = mFirebaseDatabase.getReference().child("title");
         mChatImagesReference = mFirebaseStorage.getReference().child("chat_images");
 
         List<Message> messages = new ArrayList<>();
@@ -188,6 +191,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         ActionBar actionBar = getSupportActionBar();
                         actionBar.setTitle(title.getText().toString());
+                        Title newTitle = new Title(title.getText().toString());
+                        mTitleDatabaseReference.setValue(newTitle);
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -272,6 +277,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
             mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
+
+            if(mValueEventListener == null) {
+                mValueEventListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Title currentTitle = dataSnapshot.getValue(Title.class);
+                        getSupportActionBar().setTitle(currentTitle.getTitle());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                };
+                mTitleDatabaseReference.addValueEventListener(mValueEventListener);
+            }
         }
     }
 
