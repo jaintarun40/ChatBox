@@ -254,9 +254,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Message message = dataSnapshot.getValue(Message.class);
-                    if (isNetworkAvailable()) {
-                        message.setSent(true);
-                    }
                     mMessageListAdapter.add(message);
                 }
 
