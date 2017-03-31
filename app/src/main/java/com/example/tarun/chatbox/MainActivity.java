@@ -1,6 +1,9 @@
 package com.example.tarun.chatbox;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(false);
 
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
         mChatImagesReference = mFirebaseStorage.getReference().child("chat_images");
@@ -118,8 +123,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Message message = new Message(mMessageEditText.getText().toString(), mUserName, null);
-                mMessagesDatabaseReference.push().setValue(message);
-                mMessageEditText.setText("");
+                if (isNetworkAvailable()) {
+                    mMessagesDatabaseReference.push().setValue(message);
+                    mMessageEditText.setText("");
+                } else {
+                    Toast.makeText(MainActivity.this, "Network connection unavailable!", Toast.LENGTH_LONG).show();
+                    mMessageListAdapter.add(message);
+                    mMessageEditText.setText("");
+                }
             }
         });
 
@@ -208,6 +219,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Message message = dataSnapshot.getValue(Message.class);
+                    if (isNetworkAvailable()) {
+                        message.setSent(true);
+                    }
                     mMessageListAdapter.add(message);
                 }
 
@@ -238,6 +252,13 @@ public class MainActivity extends AppCompatActivity {
             mMessagesDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }

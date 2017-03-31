@@ -36,8 +36,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Date"
-            android:layout_gravity="right|bottom"
+            android:layout_gravity="end|bottom"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
+        <ImageView
+            android:id="@+id/statusMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_gravity="end|bottom"/>
     </LinearLayout>
 
 

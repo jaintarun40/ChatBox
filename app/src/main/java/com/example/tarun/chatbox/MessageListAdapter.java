@@ -1,6 +1,10 @@
 package com.example.tarun.chatbox;
 
 import android.content.Context;
+import android.media.Image;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +13,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import java.io.IOError;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -35,6 +45,9 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         TextView messageText = (TextView) convertView.findViewById(R.id.textMessage);
         TextView messageAuthor = (TextView) convertView.findViewById(R.id.authorMessage);
         TextView messageDate = (TextView) convertView.findViewById(R.id.dateMessage);
+        ImageView messageStatus = (ImageView) convertView.findViewById(R.id.statusMessage);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         Message message = getItem(position);
 
@@ -50,9 +63,21 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
             messageText.setText(message.getMessageText());
         }
 
+        if(user.getDisplayName().equals(message.getAuthorName())) {
+            messageStatus.setVisibility(View.VISIBLE);
+            if (message.isSent()) {
+                messageStatus.setBackgroundResource(R.drawable.ic_action_single_tick);
+            } else {
+                messageStatus.setBackgroundResource(R.drawable.ic_action_wait);
+            }
+        } else {
+            messageStatus.setVisibility(View.GONE);
+        }
+
         messageAuthor.setText(message.getAuthorName());
         messageDate.setText(new SimpleDateFormat("hh:mm a").format(message.getMessageDate()));
 
         return convertView;
     }
+
 }
