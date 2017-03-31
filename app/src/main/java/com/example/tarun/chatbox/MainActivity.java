@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(false);
 
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
         mChatImagesReference = mFirebaseStorage.getReference().child("chat_images");
@@ -128,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     mMessageEditText.setText("");
                 } else {
                     Toast.makeText(MainActivity.this, "Network connection unavailable!", Toast.LENGTH_LONG).show();
-                    mMessageListAdapter.add(message);
+                    mMessagesDatabaseReference.push().setValue(message);
                     mMessageEditText.setText("");
                 }
             }
