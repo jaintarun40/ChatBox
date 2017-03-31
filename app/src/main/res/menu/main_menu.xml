@@ -5,4 +5,9 @@
     android:id="@+id/sign_out_button"
     android:title="@string/sign_out"
     app:showAsAction="never"/>
+    <item
+        android:id="@+id/edit_button"
+        android:title="Edit Title"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_action_edit"/>
 </menu>

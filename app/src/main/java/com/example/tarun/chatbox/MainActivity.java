@@ -1,17 +1,23 @@
 package com.example.tarun.chatbox;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -167,6 +173,31 @@ public class MainActivity extends AppCompatActivity {
         {
             case R.id.sign_out_button:
                 AuthUI.getInstance().signOut(this);
+                return true;
+            case R.id.edit_button:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Enter new title: ");
+
+                final EditText title = new EditText(this);
+
+                title.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                builder.setView(title);
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActionBar actionBar = getSupportActionBar();
+                        actionBar.setTitle(title.getText().toString());
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
