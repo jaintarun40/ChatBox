@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 /**
@@ -39,6 +41,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         if(isImage) {
             messageText.setVisibility(View.GONE);
             messageImage.setVisibility(View.VISIBLE);
+            Glide.with(messageImage.getContext()).load(message.getPhotoUrl()).into(messageImage);
         } else {
             messageText.setVisibility(View.VISIBLE);
             messageImage.setVisibility(View.GONE);

@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -28,6 +29,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private ChildEventListener mChildEventListener;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseStorage mFirebaseStorage;
+    private StorageReference mChatImagesReference;
 
 
     @Override
@@ -66,8 +72,11 @@ public class MainActivity extends AppCompatActivity {
         mSendButton = (ImageButton) findViewById(R.id.send_button);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseStorage = FirebaseStorage.getInstance();
+
+        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+        mChatImagesReference = mFirebaseStorage.getReference().child("chat_images");
 
         List<Message> messages = new ArrayList<>();
         mMessageListAdapter = new MessageListAdapter(this, R.layout.message_type, messages);
@@ -160,6 +169,16 @@ public class MainActivity extends AppCompatActivity {
 
         if(requestCode == IMAGE_PICK && resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
+            StorageReference imageRef = mChatImagesReference.child(imageUri.getLastPathSegment());
+
+            imageRef.putFile(imageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    Message message = new Message(null, mUserName, downloadUrl.toString());
+                    mMessagesDatabaseReference.push().setValue(message);
+                }
+            });
         } else if(requestCode == RC_SIGN_IN) {
             if(resultCode == RESULT_OK) {
                 Toast.makeText(MainActivity.this, "Welcome to ChatBox. You are now signed in!", Toast.LENGTH_SHORT).show();
