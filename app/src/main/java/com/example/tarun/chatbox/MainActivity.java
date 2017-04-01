@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mChatImagesReference;
+    private DatabaseReference mMessageDeleteDatabaseReference;
 
 
     @Override
@@ -132,13 +134,38 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Message message = new Message(mMessageEditText.getText().toString(), mUserName, null);
                 if (isNetworkAvailable()) {
-                    mMessagesDatabaseReference.push().setValue(message);
+                    message.setSent(true);
+                    message.setKey(mMessagesDatabaseReference.push().getKey());
+                    mMessagesDatabaseReference.child(message.getKey()).setValue(message);
+
                     mMessageEditText.setText("");
                 } else {
                     Toast.makeText(MainActivity.this, "Network connection unavailable!", Toast.LENGTH_LONG).show();
-                    mMessagesDatabaseReference.push().setValue(message);
+                    message.setKey(mMessagesDatabaseReference.push().getKey());
+                    mMessagesDatabaseReference.child(message.getKey()).setValue(message);
                     mMessageEditText.setText("");
                 }
+            }
+        });
+
+        mMessageListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder adb=new AlertDialog.Builder(MainActivity.this);
+                adb.setTitle("Delete?");
+                adb.setMessage("Are you sure you want to delete this message?");
+                final int positionToRemove = position;
+                adb.setNegativeButton("Cancel", null);
+                adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Message message = mMessageListAdapter.getItem(position);
+                        mMessageDeleteDatabaseReference = mFirebaseDatabase.getReference().child("messages").child(message.getKey());
+                        mMessageDeleteDatabaseReference.setValue(null);
+                        mMessageListAdapter.remove(mMessageListAdapter.getItem(positionToRemove));
+                        mMessageListAdapter.notifyDataSetChanged();
+                    }});
+                adb.show();
+                return true;
             }
         });
 

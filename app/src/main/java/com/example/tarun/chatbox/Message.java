@@ -13,6 +13,7 @@ public class Message {
     private String photoUrl;
     private Date messageDate;
     private boolean sent;
+    private String key;
 
     public Message() {
     }
@@ -23,6 +24,7 @@ public class Message {
         this.photoUrl = photoUrl;
         this.messageDate = new Date();
         this.sent = false;
+        this.key = "";
     }
 
     public String getMessageText() {
@@ -59,5 +61,13 @@ public class Message {
 
     public void setSent(boolean sent) {
         this.sent = sent;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }
