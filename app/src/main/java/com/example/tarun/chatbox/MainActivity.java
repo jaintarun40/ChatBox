@@ -31,7 +31,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         mTitleDatabaseReference = mFirebaseDatabase.getReference().child("title");
         mChatImagesReference = mFirebaseStorage.getReference().child("chat_images");
 
-        List<Message> messages = new ArrayList<>();
+        final List<Message> messages = new ArrayList<>();
         mMessageListAdapter = new MessageListAdapter(this, R.layout.message_type, messages);
         mMessageListView.setAdapter(mMessageListAdapter);
 
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Message message = new Message(mMessageEditText.getText().toString(), mUserName, null);
+                final Message message = new Message(mMessageEditText.getText().toString(), mUserName, null);
                 if (isNetworkAvailable()) {
                     message.setSent(true);
                     message.setKey(mMessagesDatabaseReference.push().getKey());
@@ -142,7 +144,21 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MainActivity.this, "Network connection unavailable!", Toast.LENGTH_LONG).show();
                     message.setKey(mMessagesDatabaseReference.push().getKey());
-                    mMessagesDatabaseReference.child(message.getKey()).setValue(message);
+                    mMessagesDatabaseReference.child(message.getKey()).setValue(message).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                mMessagesDatabaseReference.child(message.getKey()).setValue(null);
+                                for(int i = 0; i < messages.size(); i++) {
+                                    if(messages.get(i).getKey().equals(message.getKey())) {
+                                        mMessageListAdapter.remove(messages.get(i));
+                                    }
+                                }
+                                message.setSent(true);
+                                mMessagesDatabaseReference.child(message.getKey()).setValue(message);
+                            }
+                        }
+                    });
                     mMessageEditText.setText("");
                 }
             }
