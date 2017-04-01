@@ -265,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     Message message = new Message(null, mUserName, downloadUrl.toString());
+                    message.setSent(true);
                     mMessagesDatabaseReference.push().setValue(message);
                 }
             });
