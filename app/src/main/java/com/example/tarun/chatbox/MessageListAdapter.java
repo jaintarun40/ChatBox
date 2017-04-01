@@ -1,8 +1,10 @@
 package com.example.tarun.chatbox;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.media.Image;
 import android.net.ConnectivityManager;
+import android.net.LinkAddress;
 import android.net.NetworkInfo;
 import android.util.Log;
 import android.view.Gravity;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -47,6 +50,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         TextView messageAuthor = (TextView) convertView.findViewById(R.id.authorMessage);
         TextView messageDate = (TextView) convertView.findViewById(R.id.dateMessage);
         ImageView messageStatus = (ImageView) convertView.findViewById(R.id.statusMessage);
+        LinearLayout messageLinearLayout = (LinearLayout) convertView.findViewById(R.id.message_linearlayout);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -66,12 +70,14 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
 
         if(user.getDisplayName().equals(message.getAuthorName())) {
             messageStatus.setVisibility(View.VISIBLE);
+            messageAuthor.setTextColor(Color.parseColor("#F44336"));
             if (message.isSent()) {
                 messageStatus.setBackgroundResource(R.drawable.ic_action_single_tick);
             } else {
                 messageStatus.setBackgroundResource(R.drawable.ic_action_wait);
             }
         } else {
+            messageAuthor.setTextColor(Color.parseColor("#607d8b"));
             messageStatus.setVisibility(View.GONE);
         }
 
