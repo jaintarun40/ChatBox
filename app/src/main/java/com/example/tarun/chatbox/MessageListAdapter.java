@@ -68,18 +68,28 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
             messageText.setText(message.getMessageText());
         }
 
-        if(user.getDisplayName().equals(message.getAuthorName())) {
-            messageStatus.setVisibility(View.VISIBLE);
-            messageAuthor.setTextColor(Color.parseColor("#F44336"));
-            if (message.isSent()) {
-                messageStatus.setBackgroundResource(R.drawable.ic_action_single_tick);
+        if(user.getDisplayName() != null) {
+            if(user.getDisplayName().equals(message.getAuthorName())) {
+                messageStatus.setVisibility(View.VISIBLE);
+                messageAuthor.setTextColor(Color.parseColor("#F44336"));
+                if (message.isSent()) {
+                    messageStatus.setBackgroundResource(R.drawable.ic_action_single_tick);
+                } else {
+                    messageStatus.setBackgroundResource(R.drawable.ic_action_wait);
+                }
             } else {
-                messageStatus.setBackgroundResource(R.drawable.ic_action_wait);
+                messageAuthor.setTextColor(Color.parseColor("#607d8b"));
+                messageStatus.setVisibility(View.GONE);
             }
         } else {
-            messageAuthor.setTextColor(Color.parseColor("#607d8b"));
+            if(message.getAuthorName().equals("Anonymous")) {
+                messageAuthor.setTextColor(Color.parseColor("#4527a0"));
+            } else {
+                messageAuthor.setTextColor(Color.parseColor("#607d8b"));
+            }
             messageStatus.setVisibility(View.GONE);
         }
+
 
         messageAuthor.setText(message.getAuthorName());
         messageDate.setText(new SimpleDateFormat("hh:mm a").format(message.getMessageDate()));

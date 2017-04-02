@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null) {
-                    onSignedInInitialize(user.getDisplayName());
+                    onSignedInInitialize(user.getDisplayName() != null ? user.getDisplayName() : ANONYMOUS);
                 } else {
                     onSignedOutCleanup();
                     startActivityForResult(
