@@ -14,17 +14,19 @@ public class Message {
     private Date messageDate;
     private boolean sent;
     private String key;
+    private String email;
 
     public Message() {
     }
 
-    public Message(String messageText, String authorName, String photoUrl) {
+    public Message(String messageText, String authorName, String photoUrl, String email) {
         this.messageText = messageText;
         this.authorName = authorName;
         this.photoUrl = photoUrl;
         this.messageDate = new Date();
         this.sent = false;
         this.key = "";
+        this.email = email;
     }
 
     public String getMessageText() {
@@ -69,5 +71,13 @@ public class Message {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mChatImagesReference;
     private DatabaseReference mMessageDeleteDatabaseReference;
+    private FirebaseUser mFirebaseUser;
 
 
     @Override
@@ -134,7 +135,8 @@ public class MainActivity extends AppCompatActivity {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Message message = new Message(mMessageEditText.getText().toString(), mUserName, null);
+                mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                final Message message = new Message(mMessageEditText.getText().toString(), mUserName, null, mFirebaseUser.getEmail());
                 if (isNetworkAvailable()) {
                     message.setSent(true);
                     message.setKey(mMessagesDatabaseReference.push().getKey());
@@ -264,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    Message message = new Message(null, mUserName, downloadUrl.toString());
+                    Message message = new Message(null, mUserName, downloadUrl.toString(), mFirebaseUser.getEmail());
                     message.setSent(true);
                     mMessagesDatabaseReference.push().setValue(message);
                 }

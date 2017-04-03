@@ -68,8 +68,8 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
             messageText.setText(message.getMessageText());
         }
 
-        if(user.getDisplayName() != null) {
-            if(user.getDisplayName().equals(message.getAuthorName())) {
+        if(user.getEmail() != null) {
+            if(user.getEmail().equals(message.getEmail())) {
                 messageStatus.setVisibility(View.VISIBLE);
                 messageAuthor.setTextColor(Color.parseColor("#F44336"));
                 if (message.isSent()) {
@@ -87,12 +87,11 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
             } else {
                 messageAuthor.setTextColor(Color.parseColor("#607d8b"));
             }
-            messageStatus.setVisibility(View.GONE);
         }
 
 
         messageAuthor.setText(message.getAuthorName());
-        messageDate.setText(new SimpleDateFormat("hh:mm a").format(message.getMessageDate()));
+        messageDate.setText(new SimpleDateFormat("hh:mm a dd.MM.yyyy").format(message.getMessageDate()));
 
         return convertView;
     }
